@@ -1,0 +1,17 @@
+.es-tree-invisible {
+  display: none;
+}
+
+.es-tree ul,
+.es-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+.es-tree-node {
+  display: block;
+}
+
+.es-tree-node .es-tree-node {
+  padding-left: 40px;
+}

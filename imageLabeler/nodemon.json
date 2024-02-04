@@ -1,0 +1,5 @@
+{
+  "watch": ["src","server/src"],
+  "exec": "npm run build-and-serve",
+  "ext": "html,ts,js"
+}
