@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
 import {mat4} from 'gl-matrix'
 import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
+import {SyntheticImageGeneratorService} from "./synthetic-image-generator.service";
 export interface ExamSeriesNode {
   name:string;
   parent?:string;
@@ -14,7 +15,9 @@ interface SeriesListAPI {
   exam:string;
   series:string[];
 }
-interface VolumeAPI {
+export interface VolumeAPI {
+  exam:string;
+  series:string;
   transform:number[];
   ijkDimension:number[]
 }
@@ -31,15 +34,22 @@ export class ExamSeriesLoaderService {
   volume:vtkImageData = vtkImageData.newInstance();
   examLoadedSubject = new Subject<void>();
   seriesLoadedSubject = new Subject<string>();
+  seriesVolumeSubject = new Subject<vtkImageData>();
+
   onExamLoadedSubject() {
     return this.examLoadedSubject.asObservable();
   }
   onSeriesLoadedSubject() {
     return this.seriesLoadedSubject.asObservable();
   }
+  onSeriesVolumeLoaded() {
+    return this.seriesVolumeSubject.asObservable();
+  }
 
 
-  constructor() { }
+  constructor(private syntheticVolumeService:SyntheticImageGeneratorService) {
+
+  }
   public async LoadExamsList()
   {
     const response = await fetch('/images');
@@ -84,8 +94,13 @@ export class ExamSeriesLoaderService {
     this.seriesLoadedSubject.next(exam);
   }
   public async getSeriesVolumeSummary(exam:string, series:string) {
+    let pendingSlice = 0;
     let volumeResponse = await fetch('/images/e'+ exam + '/s' + series);
     let volume = await volumeResponse.json() as VolumeAPI;
+
+ //   let volume = vtkImageData.newInstance();
+ //   this.syntheticVolumeService.createCheckerBoard(volume,[64,64,64],4,[1000,2000])
+ ///   this.seriesVolumeSubject.next(volume);
   }
 
   getExams() {

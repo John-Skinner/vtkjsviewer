@@ -49,7 +49,11 @@ export class ExamSeriesListComponent implements OnInit {
       console.log(`parent(${node.name})`);
     }
     else {
+      if (!node.parent) {
+        return;
+      }
       console.log(`child(${node.name}) ${node.parent}`);
+      this.examSeriesService.getSeriesVolumeSummary(node.parent,node.name)
     }
   }
   leaf() {

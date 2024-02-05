@@ -9,6 +9,12 @@ import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkOpenGLRenderWindow, {IOpenGLRenderWindowInitialValues} from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
 import vtkRenderer from '@kitware/vtk.js/Rendering/Core/Renderer';
+import {PipelineElements, ViewUtilitiesService} from "../../services/view-utilities.service";
+
+class PolyRenderPipeline extends PipelineElements {
+
+}
+
 @Component({
   selector: 'app-vr-view',
   standalone: true,
@@ -17,47 +23,39 @@ import vtkRenderer from '@kitware/vtk.js/Rendering/Core/Renderer';
   styleUrl: './vr-view.component.scss'
 })
 export class VrViewComponent implements AfterViewInit {
-  windowWidth = 0;
-  windowHeight = 0;
-  renderWindow:vtkRenderWindow | null = null;
-  openGLRenderWindow:vtkOpenGLRenderWindow | null = null;
+  renderPipeline:PolyRenderPipeline = new PolyRenderPipeline();
+
+
   @ViewChild('vtkRenderWindowDiv') vtkDiv!:ElementRef;
+  constructor(private viewUtilities:ViewUtilitiesService)
+  {
+  }
 
   ngAfterViewInit(): void
   {
-    let container = this.vtkDiv.nativeElement as HTMLDivElement;
-    this.windowWidth = container.clientWidth;
-    this.windowHeight = container.clientHeight;
-    console.log(`window size:${this.windowWidth} x ${this.windowHeight}`)
+    this.viewUtilities.initCommonVtkJSPipeline(this.renderPipeline,this.vtkDiv);
 
-    this.renderWindow = vtkRenderWindow.newInstance();
-    const initialValues:IOpenGLRenderWindowInitialValues = {};
-    if (!initialValues) {
-      console.error('Error, unable to create render window');
-      return;
-    }
     try
     {
-      this.openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
-      this.openGLRenderWindow.setContainer(container);
-      this.openGLRenderWindow.setSize(this.windowWidth, this.windowHeight);
-      this.renderWindow.addView(this.openGLRenderWindow);
+
+      if (!this.renderPipeline.renderer) {
+      return;
+      }
+      if (!this.renderPipeline.renderWindow) {
+        return;
+      }
+
+
       const coneSource = vtkConeSource.newInstance();
       const actor = vtkActor.newInstance();
       const mapper = vtkMapper.newInstance();
       actor.setMapper(mapper);
       mapper.setInputConnection(coneSource.getOutputPort());
-      const renderer = vtkRenderer.newInstance();
-      this.renderWindow.addRenderer(renderer);
-      const interactor = vtkRenderWindowInteractor.newInstance();
-      interactor.setInteractorStyle(vtkInteractorStyleTrackballCamera.newInstance());
-      interactor.setView(this.openGLRenderWindow);
-      interactor.initialize();
-      interactor.bindEvents(container);
-      renderer.addActor(actor);
-      renderer.resetCamera();
+
+      this.renderPipeline.renderer.addActor(actor);
+      this.renderPipeline.renderer.resetCamera();
       console.log('init render window render');
-      this.renderWindow.render();
+      this.renderPipeline.renderWindow.render();
     }
     catch (e) {
       console.log('error caught');
