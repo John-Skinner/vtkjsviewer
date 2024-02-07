@@ -31,7 +31,7 @@ class SliceRenderPipeline extends PipelineElements
 export class SliceViewComponent implements AfterViewInit
 {
   renderPipeline: SliceRenderPipeline = new SliceRenderPipeline();
-  @ViewChild('vtkRenderWindowDiv') vtkDiv!: ElementRef;
+  @ViewChild('vtkRenderWindowDivI') vtkDiv!: ElementRef;
 
   constructor(private loaderService: ExamSeriesLoaderService, private viewUtilities: ViewUtilitiesService)
   {
@@ -43,7 +43,6 @@ export class SliceViewComponent implements AfterViewInit
       this.renderPipeline.renderer?.resetCamera();
       this.renderPipeline.imageActorK.getProperty().setColorWindow(3000);
       this.renderPipeline.imageActorK.getProperty().setColorLevel(1000);
-      this.renderPipeline.imageActorK.setPosition(volume.position[0],volume.position[1],volume.position[2]);
       this.renderPipeline.renderWindow?.render();
 
 

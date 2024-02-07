@@ -5,7 +5,12 @@
 }
 #renderPanel {
   display:grid;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: 50% 50%;
+  grid-template-columns: 1fr 1fr;
 }
+#controlPanelID {
+  display:grid;
+  grid-template-columns: 1fr;
+  padding-right: 5mm;
+}
+
 

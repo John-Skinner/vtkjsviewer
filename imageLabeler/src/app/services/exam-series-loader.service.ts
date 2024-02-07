@@ -46,6 +46,9 @@ export class ExamSeriesLoaderService {
   onSeriesVolumeLoaded() {
     return this.seriesVolumeSubject.asObservable();
   }
+  constructor(private volumeLoader:VolumeLoaderService)
+  {
+  }
 
   public async LoadExamsList()
   {
@@ -93,19 +96,15 @@ export class ExamSeriesLoaderService {
   public async getSeriesVolumeSummary(exam:string, series:string) {
     let volumeResponse = await fetch('/images/e'+ exam + '/s' + series);
     let volume = await volumeResponse.json() as VolumeAPI;
-    let pixelsLoader = new VolumeLoaderService(volume);
     try {
-      let resultVolume = await pixelsLoader.aLoad();
+      let resultVolume = await this.volumeLoader.aLoad(volume);
+
       this.seriesVolumeSubject.next(resultVolume);
     }
     catch (e) {
       console.log(`pixel load error:${e}`);
     }
 
-
- //   let volume = vtkImageData.newInstance();
- //   this.syntheticVolumeService.createCheckerBoard(volume,[64,64,64],4,[1000,2000])
- ///   this.seriesVolumeSubject.next(volume);
   }
 
   getExams() {

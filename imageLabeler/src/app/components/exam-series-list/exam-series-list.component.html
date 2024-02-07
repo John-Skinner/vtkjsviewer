@@ -1,4 +1,8 @@
-<div style="width:5cm">
+<div id="examListID">
+  <p id = 'instructionsID'>
+    Select an exam to open series of the exam.
+    Select series item to load.
+  </p>
 <mat-tree [dataSource]="examsSource" [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node" class="es-tree-node">
     <button mat-icon-button disabled></button>
@@ -9,7 +13,7 @@
   <mat-nested-tree-node *matTreeNodeDef="let node;when:hasChild" >
     <div class="mat-tree-node">
       <button mat-icon-button matTreeNodeToggle (click)="expand(node)" [attr.aria-label]="'Toggle ' + node.name">
-          {{treeControl.isExpanded(node) ? 'V':'>'}}
+          {{treeControl.isExpanded(node) ? 'Series of Exam':'Exam'}}
       </button>
 
       {{node.name}}

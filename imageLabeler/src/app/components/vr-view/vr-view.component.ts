@@ -1,13 +1,21 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import '@kitware/vtk.js/Rendering/Profiles/Geometry'
-import '@kitware/vtk.js/Rendering/Profiles/Volume'
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
-import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import {PipelineElements, ViewUtilitiesService} from "../../services/view-utilities.service";
+import {ExamSeriesLoaderService} from "../../services/exam-series-loader.service";
+import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
+import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
+import vtkPiecewiseFunction from "@kitware/vtk.js/Common/DataModel/PiecewiseFunction";
+import vtkColorTransferFunction from "@kitware/vtk.js/Rendering/Core/ColorTransferFunction";
+class VrRenderPipeline extends PipelineElements {
+  vrMapper:vtkVolumeMapper = vtkVolumeMapper.newInstance();
+  actor:vtkVolume = vtkVolume.newInstance();
+  piecewiseFunction:vtkPiecewiseFunction = vtkPiecewiseFunction.newInstance();
+  colorTransferFunction:vtkColorTransferFunction = vtkColorTransferFunction.newInstance();
 
-class PolyRenderPipeline extends PipelineElements {
-
+  constructor()
+  {
+    super();
+    this.actor.setMapper(this.vrMapper);
+  }
 }
 
 @Component({
@@ -18,42 +26,46 @@ class PolyRenderPipeline extends PipelineElements {
   styleUrl: './vr-view.component.scss'
 })
 export class VrViewComponent implements AfterViewInit {
-  renderPipeline:PolyRenderPipeline = new PolyRenderPipeline();
-
-
+  renderPipeline:VrRenderPipeline = new VrRenderPipeline();
   @ViewChild('vtkRenderWindowDiv') vtkDiv!:ElementRef;
-  constructor(private viewUtilities:ViewUtilitiesService)
+  constructor(private loaderService:ExamSeriesLoaderService,private viewUtilities:ViewUtilitiesService)
   {
+    this.loaderService.onSeriesVolumeLoaded().subscribe((volume)=>{
+      this.renderPipeline.vrMapper.setInputData(volume.image);
+      this.renderPipeline.colorTransferFunction.removeAllPoints();
+      this.renderPipeline.colorTransferFunction.addRGBPoint(0,0,1,0);
+      this.renderPipeline.colorTransferFunction.addRGBPoint(5000,0,0,1);
+      this.renderPipeline.piecewiseFunction.removeAllPoints();
+      this.renderPipeline.piecewiseFunction.addPoint(0,0);
+      this.renderPipeline.piecewiseFunction.addPoint(2000,0.8);
+      this.renderPipeline.piecewiseFunction.addPoint(20000,1.0);
+      this.renderPipeline.actor.getProperty().setRGBTransferFunction(0,this.renderPipeline.colorTransferFunction);
+      this.renderPipeline.actor.getProperty().setScalarOpacity(0,this.renderPipeline.piecewiseFunction);
+
+      this.renderPipeline.renderer?.resetCamera();
+      this.renderPipeline.renderWindow?.render();
+
+
+    })
   }
 
-  ngAfterViewInit(): void
-  {
-    this.viewUtilities.initCommonVtkJSPipeline(this.renderPipeline,this.vtkDiv);
-
-    try
+ngAfterViewInit()
+{
+  this.viewUtilities.initCommonVtkJSPipeline(this.renderPipeline, this.vtkDiv);
+  try {
+    if (!this.renderPipeline.renderer)
     {
-
-      if (!this.renderPipeline.renderer) {
       return;
-      }
-      if (!this.renderPipeline.renderWindow) {
-        return;
-      }
-
-
-      const coneSource = vtkConeSource.newInstance();
-      const actor = vtkActor.newInstance();
-      const mapper = vtkMapper.newInstance();
-      actor.setMapper(mapper);
-      mapper.setInputConnection(coneSource.getOutputPort());
-
-      this.renderPipeline.renderer.addActor(actor);
-      this.renderPipeline.renderer.resetCamera();
-      console.log('init render window render');
-      this.renderPipeline.renderWindow.render();
     }
-    catch (e) {
-      console.log('error caught');
+    if (!this.renderPipeline.renderWindow)
+    {
+      return;
     }
+    this.renderPipeline.renderer.addActor(this.renderPipeline.actor);
+
   }
+  catch (e) {
+
+  }
+}
 }
