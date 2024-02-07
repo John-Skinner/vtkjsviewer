@@ -6,11 +6,11 @@ Refer to the wiki for design.
 # To get DICOM images to serve, do the following:
 1) Go to `central.xnat.org`
 2) Pick [MR] tab
-3) under 'Project'
-4) select IGT_FMRI_NEURO
-5) [Submit]
-6) pick a session such as label [025 IGT_FMRI_NEURO) for 025
-7) select all the series
+3) Under 'Project:' field, click the field and a list of projects is presented.
+4) Select IGT_FMRI_NEURO
+5) Click the [Submit] button.
+6) Pick a session such as label [025 IGT_FMRI_NEURO) for 025
+7) Select all the series
 You will get the series as a zop file that contains DICOM part 10 files.
 Unpack the files and put them into a directory structure:
 ```
