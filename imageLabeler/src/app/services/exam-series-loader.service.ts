@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
-import {mat3, mat4} from 'gl-matrix'
+import {mat3} from 'gl-matrix'
 import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import {VolumeLoaderService} from "./volume-loader.service";
 export interface ExamSeriesNode {
