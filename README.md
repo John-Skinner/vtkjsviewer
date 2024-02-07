@@ -2,7 +2,7 @@
 In very early stage, just displays images with vtk.js
 
 Refer to the wiki for design.
-j
+
 # To get DICOM images to serve, do the following:
 1) Go to `central.xnat.org`
 2) Pick [MR] tab
