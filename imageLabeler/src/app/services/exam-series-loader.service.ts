@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
-import {mat4} from 'gl-matrix'
+import {mat3, mat4} from 'gl-matrix'
 import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import {SyntheticImageGeneratorService} from "./synthetic-image-generator.service";
+import {VolumeLoaderService} from "./volume-loader.service";
 export interface ExamSeriesNode {
   name:string;
   parent?:string;
@@ -14,6 +15,11 @@ interface ExamListAPI {
 interface SeriesListAPI {
   exam:string;
   series:string[];
+}
+export interface VolumeInstance {
+  image:vtkImageData,
+  direction:mat3,
+  position:number[]
 }
 export interface VolumeAPI {
   exam:string;
@@ -34,7 +40,7 @@ export class ExamSeriesLoaderService {
   volume:vtkImageData = vtkImageData.newInstance();
   examLoadedSubject = new Subject<void>();
   seriesLoadedSubject = new Subject<string>();
-  seriesVolumeSubject = new Subject<vtkImageData>();
+  seriesVolumeSubject = new Subject<VolumeInstance>();
 
   onExamLoadedSubject() {
     return this.examLoadedSubject.asObservable();
@@ -97,6 +103,15 @@ export class ExamSeriesLoaderService {
     let pendingSlice = 0;
     let volumeResponse = await fetch('/images/e'+ exam + '/s' + series);
     let volume = await volumeResponse.json() as VolumeAPI;
+    let pixelsLoader = new VolumeLoaderService(volume);
+    try {
+      let resultVolume = await pixelsLoader.aLoad();
+      this.seriesVolumeSubject.next(resultVolume);
+    }
+    catch (e) {
+      console.log(`pixel load error:${e}`);
+    }
+
 
  //   let volume = vtkImageData.newInstance();
  //   this.syntheticVolumeService.createCheckerBoard(volume,[64,64,64],4,[1000,2000])

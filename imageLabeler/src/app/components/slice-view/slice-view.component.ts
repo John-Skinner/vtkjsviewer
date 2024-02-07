@@ -37,12 +37,13 @@ export class SliceViewComponent implements AfterViewInit
   {
     this.loaderService.onSeriesVolumeLoaded().subscribe((volume) =>
     {
-      console.log(`volume loaded with dims:${volume.getDimensions()[0]},${volume.getDimensions()[1]},${volume.getDimensions()[2]}`);
-      this.renderPipeline.imageMapperK.setInputData(volume);
+      console.log(`volume loaded with dims:${volume.image.getDimensions()[0]},${volume.image.getDimensions()[1]},${volume.image.getDimensions()[2]}`);
+      this.renderPipeline.imageMapperK.setInputData(volume.image);
       this.renderPipeline.imageMapperK.setKSlice(10);
       this.renderPipeline.renderer?.resetCamera();
       this.renderPipeline.imageActorK.getProperty().setColorWindow(3000);
       this.renderPipeline.imageActorK.getProperty().setColorLevel(1000);
+      this.renderPipeline.imageActorK.setPosition(volume.position[0],volume.position[1],volume.position[2]);
       this.renderPipeline.renderWindow?.render();
 
 

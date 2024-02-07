@@ -44,16 +44,19 @@ export class ExamSeriesListComponent implements OnInit {
     })
 
   }
-  expand(node:ExamSeriesNode) {
-    if (node.children) {
+  async expand(node: ExamSeriesNode)
+  {
+    if (node.children)
+    {
       console.log(`parent(${node.name})`);
-    }
-    else {
-      if (!node.parent) {
+    } else
+    {
+      if (!node.parent)
+      {
         return;
       }
-      console.log(`child(${node.name}) ${node.parent}`);
-      this.examSeriesService.getSeriesVolumeSummary(node.parent,node.name)
+      console.log(` getSeriesVolumeSummary(${node.parent},${node.name})`);
+      await this.examSeriesService.getSeriesVolumeSummary(node.parent, node.name)
     }
   }
   leaf() {

@@ -52,7 +52,7 @@ class ImageLoader {
       this.pixels = new Uint16Array(this.dimensions[0]*this.dimensions[1]);
       let leSum = 0.0;
       let beSum = 0.0;
-      for (let i = 0;i < this.pixels.length/2;i++) {
+      for (let i = 0;i < this.pixels.length;i++) {
         // use little endian ordering
         let b1 = pixelArray[i*2];
         let b2 = pixelArray[i*2+1];
@@ -60,7 +60,8 @@ class ImageLoader {
         leSum += (b2*256+b1);
         this.pixels[i] = b2 * 256 + b1;
       }
-      this.pixelsCoded = Buffer.from(this.pixels).toString('base64');
+      this.pixels[this.dimensions[0]*this.dimensions[1]-1] = 4000;
+      this.pixelsCoded = Buffer.from(this.pixels.buffer).toString('base64');
 
 
     } catch (ex) {
