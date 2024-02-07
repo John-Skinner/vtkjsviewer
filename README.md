@@ -1,4 +1,4 @@
-# Labelling tool for marking regions from MRI images.
+# Labeling tool for marking regions from MRI images.
 In very early stage, just displays images with vtk.js
 
 Refer to the wiki for design.
