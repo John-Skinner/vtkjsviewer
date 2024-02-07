@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import {VolumeAPI} from "./exam-series-loader.service";
-import { VolumeInstance } from "./exam-series-loader.service"
+import {VolumeAPI, VolumeInstance} from "./exam-series-loader.service";
 import {Subject} from "rxjs";
 import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import vtkDataArray from "@kitware/vtk.js/Common/Core/DataArray";
 import {mat3, mat4, vec3} from "gl-matrix";
+
 export interface VolumeSlice {
   exam:string,
   series:string,
@@ -31,7 +30,7 @@ export class VolumeLoaderService {
   }
   static normalizeColumn(normVec:vec3,mat:mat4,col:number) {
     let columnVec=vec3.fromValues(
-      mat[col*4+0],
+      mat[col*4],
       mat[col*4+1],
       mat[col*4+2]);
     vec3.normalize(normVec,columnVec);
@@ -88,10 +87,10 @@ export class VolumeLoaderService {
     return shorts;
   }
   aLoad() {
-    let p = new Promise<VolumeInstance>((res,rej)=> {
-      this.load(res,rej);
-    })
-    return p;
+    return new Promise<VolumeInstance>((res, rej) =>
+    {
+      this.load(res, rej);
+    });
   }
   load(res:(res:VolumeInstance)=>void,rej:(rej:string)=>void) {
     this.pendingSlice = 0;

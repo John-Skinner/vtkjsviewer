@@ -1,14 +1,9 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import '@kitware/vtk.js/Rendering/Profiles/Geometry'
 import '@kitware/vtk.js/Rendering/Profiles/Volume'
-import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";'@kitware/vtk.js/Rendering/Core/RenderWindowInteractor';
-import vtkInteractorStyleTrackballCamera from '@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkOpenGLRenderWindow, {IOpenGLRenderWindowInitialValues} from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
-import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
-import vtkRenderer from '@kitware/vtk.js/Rendering/Core/Renderer';
 import {PipelineElements, ViewUtilitiesService} from "../../services/view-utilities.service";
 
 class PolyRenderPipeline extends PipelineElements {

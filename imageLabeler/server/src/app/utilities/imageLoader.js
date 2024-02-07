@@ -23,8 +23,6 @@ class ImageLoader {
     let dicomFileAsBuffer = fs.readFileSync(pathAndFile);
     try {
       let dataset = dicomParser.parseDicom(dicomFileAsBuffer);
-      let pn = dataset.string('x00100010');
-      let ulhc = dataset.float('x00200032');
       this.rowVector[0] = dataset.floatString('x00200037',0);
       this.rowVector[1] = dataset.floatString('x00200037',1);
       this.rowVector[2] = dataset.floatString('x00200037',2);
@@ -74,7 +72,6 @@ class ImageLoader {
    * @param {Vec3} masterOrigin
    */
   calcGeoSortKeys(masterOrigin) {
-    let product=Vec3.create();
     let relativePos=Vec3.create();
     this.geoSortKeys.push(Math.round(this.normal[0]*100));
     this.geoSortKeys.push(Math.round(this.normal[1]*100));

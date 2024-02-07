@@ -1,7 +1,4 @@
-const Koa = require('koa');
-const fs = require('fs');
 const {promisify} = require('util');
-const path = require('node:path');
 const areaddir=promisify(require('fs').readdir);
 const SeriesLoader = require('../app/utilities/seriesLoader')
 
