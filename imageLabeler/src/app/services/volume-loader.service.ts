@@ -193,7 +193,11 @@ export class VolumeLoaderService {
               let percentDone = 100.0*this.pendingSlice/(this.volume.ijkDimension[2]-1);
               console.log(`% done:${percentDone}`);
               this.loadProgressSubject.next(percentDone);
-              requestIdleCallback(()=>{this.loadNextSlice(res,rej)});
+              setTimeout(()=>
+              {
+                this.loadNextSlice(res,rej);
+              },10);
+   // not available in mobile or safari           requestIdleCallback(()=>{this.loadNextSlice(res,rej)});
             }
             else {
               this.loadProgressSubject.next(100);

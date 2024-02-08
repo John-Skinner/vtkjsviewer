@@ -3,9 +3,11 @@ import {ExamSeriesLoaderService} from "../../services/exam-series-loader.service
 import {PipelineElements, ViewUtilitiesService} from "../../services/view-utilities.service";
 import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper";
 import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice";
+import {CameraSettings} from "../../Utilities/CameraSettings";
 
 class SliceRenderPipeline extends PipelineElements
 {
+  cameraControl:CameraSettings = new CameraSettings()
   imageMapperI = vtkImageMapper.newInstance();
   imageMapperJ = vtkImageMapper.newInstance();
   imageMapperK = vtkImageMapper.newInstance();
@@ -38,12 +40,22 @@ export class SliceViewComponent implements AfterViewInit
     this.loaderService.onSeriesVolumeLoaded().subscribe((volume) =>
     {
       console.log(`volume loaded with dims:${volume.image.getDimensions()[0]},${volume.image.getDimensions()[1]},${volume.image.getDimensions()[2]}`);
+      if (!this.renderPipeline.renderer) {
+        console.error('Error, pipeline renderer is not initialized.');
+        return;
+      }
+      if (!this.renderPipeline.renderWindow) {
+        console.error('Error, pipeline renderer is not initialized.');
+        return;
+      }
       this.renderPipeline.imageMapperK.setInputData(volume.image);
       this.renderPipeline.imageMapperK.setKSlice(10);
-      this.renderPipeline.renderer?.resetCamera();
+      this.renderPipeline.renderer.resetCamera();
       this.renderPipeline.imageActorK.getProperty().setColorWindow(3000);
       this.renderPipeline.imageActorK.getProperty().setColorLevel(1000);
-      this.renderPipeline.renderWindow?.render();
+      this.renderPipeline.renderWindow.render();
+      this.renderPipeline.cameraControl.controlVolumeViewWithCamera(volume.image,this.renderPipeline.renderer.getActiveCamera());
+
 
 
 
