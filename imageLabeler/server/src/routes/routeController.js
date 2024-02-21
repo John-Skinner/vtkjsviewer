@@ -25,7 +25,7 @@ var volumeCache = new Map();
 
 
 const KoaRouter = require('@koa/router');
-let rootImagesDir="/Users/johnskinner/DICOMImages";
+let rootImagesDir="/serverRoot/vtkjsLabeler/DICOMImages";
 routerOpts = {
   prefix:'/images'
 };

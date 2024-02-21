@@ -25,5 +25,5 @@ app.use(Router.routes());
 app.use(Router.allowedMethods());
 //app.on('error',console.error);
 console.log('app initialized');
-app.listen(3000);
+app.listen(80);
 
