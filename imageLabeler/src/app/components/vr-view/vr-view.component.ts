@@ -4,6 +4,7 @@ import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style
 import {VropacityWidgetComponent} from "../vropacity-widget/vropacity-widget.component";
 import { VrRenderPipeline} from "../../Utilities/VrRenderPipeline";
 import {ViewSynchronizerService} from "../../services/view-synchronizer.service";
+import {CameraSettings} from "../../Utilities/CameraSettings";
 
 @Component({
   selector: 'app-vr-view',
@@ -16,10 +17,11 @@ import {ViewSynchronizerService} from "../../services/view-synchronizer.service"
 })
 export class VrViewComponent implements AfterViewInit {
   renderPipeline:VrRenderPipeline = new VrRenderPipeline();
+  cameraSettings:CameraSettings = new CameraSettings();
   @ViewChild('vtkRenderWindowDiv') vtkDiv!:ElementRef;
   constructor(private loaderService:ExamSeriesLoaderService,private viewSynchronizer:ViewSynchronizerService)
   {
-    this.loaderService.onSeriesVolumeLoaded().subscribe((volume)=>{
+    this.loaderService.onSeriesVolumeLoaded().subscribe(()=>{
       if (!this.loaderService.primaryVolume) {
         throw new Error('loading error: primary volume missing.');
       }
@@ -36,8 +38,10 @@ export class VrViewComponent implements AfterViewInit {
         throw new Error('No Label Volume after load.');
       }
 
+      this.cameraSettings.initializeCameraControls(this.loaderService.primaryVolume.image,this.renderPipeline.renderer.getActiveCamera());
+      this.cameraSettings.axialView([],null);
 
-      this.renderPipeline.renderer.resetCamera();
+    //  this.renderPipeline.renderer.resetCamera();
       this.renderPipeline.renderWindow?.render();
 
     });

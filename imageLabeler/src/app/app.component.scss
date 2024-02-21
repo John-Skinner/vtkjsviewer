@@ -9,9 +9,9 @@
   grid-template-rows:300px 300px;
 }
 #controlPanelID {
-  display:grid;
-  grid-template-columns: 1fr;
-  padding-right: 5mm;
+  display:flex;
+  flex-direction: column;
+
 }
 
 

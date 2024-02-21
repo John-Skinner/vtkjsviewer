@@ -226,7 +226,10 @@ export class CameraSettings {
     let axis = 2; // for axial views
     let middleSlice = Math.round(dims[axis]/2);
     console.log(`paging to middle of volume ${middleSlice}`);
-    this.pageTo(middleSlice-1,middleSlice,imageMapper,axis);
+    if (imageMapper.length > 0) {
+      this.pageTo(middleSlice-1,middleSlice,imageMapper,axis);
+    }
+
 
 
  }
