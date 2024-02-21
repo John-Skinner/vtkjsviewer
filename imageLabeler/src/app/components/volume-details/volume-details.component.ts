@@ -15,9 +15,6 @@ export class VolumeDetailsComponent implements AfterViewInit {
   {
     this.volumeLoadService.onLoadProgress().subscribe((completion)=>
     {
-      let progressValue = Math.floor(completion).toFixed(0);
-      console.log(`updating completion to ${progressValue}`);
-
       if (this.progress) {
         let progressItem = this.progress.nativeElement as HTMLProgressElement;
         progressItem.value = completion;

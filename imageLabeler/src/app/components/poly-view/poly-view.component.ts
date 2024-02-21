@@ -4,11 +4,12 @@ import '@kitware/vtk.js/Rendering/Profiles/Volume'
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkConeSource from '@kitware/vtk.js/Filters/Sources/ConeSource';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import {PipelineElements, ViewUtilitiesService} from "../../services/view-utilities.service";
+import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
+import {Line} from "../../Utilities/Line";
+import {ExamSeriesLoaderService} from "../../services/exam-series-loader.service";
+import {MarchingCubesPipeline} from "../../Utilities/MarchingCubesPipeline";
 
-class PolyRenderPipeline extends PipelineElements {
 
-}
 
 @Component({
   selector: 'app-poly-view',
@@ -18,17 +19,45 @@ class PolyRenderPipeline extends PipelineElements {
   styleUrl: './poly-view.component.scss'
 })
 export class PolyViewComponent implements AfterViewInit {
-  renderPipeline:PolyRenderPipeline = new PolyRenderPipeline();
+  renderPipeline:MarchingCubesPipeline = new MarchingCubesPipeline();
+
 
 
   @ViewChild('vtkRenderWindowDiv') vtkDiv!:ElementRef;
-  constructor(private viewUtilities:ViewUtilitiesService)
+  constructor(private examSeriesLoader:ExamSeriesLoaderService)
   {
+    examSeriesLoader.onSeriesVolumeLoaded().subscribe((vol)=>{
+      console.log(`volume loaded to polyview`);
+      let labelVolume=this.examSeriesLoader.labelVolume?.image;
+      if (!labelVolume) {
+        console.error(`label volume is null on load`);
+        return;
+      }
+      let primaryVolume = this.examSeriesLoader.primaryVolume?.image;
+      if (!primaryVolume) {
+        console.error(`primary volume is null on load`);
+        return;
+      }
+      this.renderPipeline.setImage(labelVolume);
+      this.renderPipeline.configure();
+      this.renderPipeline.renderer.addActor(this.renderPipeline.getMcActor());
+      this.renderPipeline.updateIsoValue(0.0);
+
+    })
+  }
+  updateIsoValue(event:Event) {
+    let input = event.target as HTMLInputElement;
+    let value =  input.value;
+    let isoValue = Number(value);
+    this.renderPipeline.updateIsoValue(isoValue);
+    this.renderPipeline.renderer.resetCamera();
+    this.renderPipeline.renderWindow?.render();
   }
 
   ngAfterViewInit(): void
   {
-    this.viewUtilities.initCommonVtkJSPipeline(this.renderPipeline,this.vtkDiv);
+    let interactor = vtkInteractorStyleTrackballCamera.newInstance();
+    this.renderPipeline.initCommonVtkJSPipeline(this.vtkDiv,interactor);
 
     try
     {
@@ -41,13 +70,6 @@ export class PolyViewComponent implements AfterViewInit {
       }
 
 
-      const coneSource = vtkConeSource.newInstance();
-      const actor = vtkActor.newInstance();
-      const mapper = vtkMapper.newInstance();
-      actor.setMapper(mapper);
-      mapper.setInputConnection(coneSource.getOutputPort());
-
-      this.renderPipeline.renderer.addActor(actor);
       this.renderPipeline.renderer.resetCamera();
       console.log('init render window render');
       this.renderPipeline.renderWindow.render();

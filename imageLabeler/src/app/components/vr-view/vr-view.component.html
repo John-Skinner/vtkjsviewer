@@ -1,4 +1,10 @@
 <h2> Volume Render Visualization</h2>
-<div #vtkRenderWindowDiv id="vtkRenderWindowDiv">
+<div id="VRVizID">
+  <div #vtkRenderWindowDiv id="vtkRenderWindowDiv">
 
+  </div>
+  <app-vropacity-widget [VrPipeline]="renderPipeline"
+                        id="transferFuncID">
+
+  </app-vropacity-widget>
 </div>

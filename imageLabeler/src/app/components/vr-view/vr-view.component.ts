@@ -1,57 +1,55 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import {PipelineElements, ViewUtilitiesService} from "../../services/view-utilities.service";
 import {ExamSeriesLoaderService} from "../../services/exam-series-loader.service";
-import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
-import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
-import vtkPiecewiseFunction from "@kitware/vtk.js/Common/DataModel/PiecewiseFunction";
-import vtkColorTransferFunction from "@kitware/vtk.js/Rendering/Core/ColorTransferFunction";
-class VrRenderPipeline extends PipelineElements {
-  vrMapper:vtkVolumeMapper = vtkVolumeMapper.newInstance();
-  actor:vtkVolume = vtkVolume.newInstance();
-  piecewiseFunction:vtkPiecewiseFunction = vtkPiecewiseFunction.newInstance();
-  colorTransferFunction:vtkColorTransferFunction = vtkColorTransferFunction.newInstance();
-
-  constructor()
-  {
-    super();
-    this.actor.setMapper(this.vrMapper);
-  }
-}
+import vtkInteractorStyleTrackballCamera from "@kitware/vtk.js/Interaction/Style/InteractorStyleTrackballCamera";
+import {VropacityWidgetComponent} from "../vropacity-widget/vropacity-widget.component";
+import { VrRenderPipeline} from "../../Utilities/VrRenderPipeline";
+import {ViewSynchronizerService} from "../../services/view-synchronizer.service";
 
 @Component({
   selector: 'app-vr-view',
   standalone: true,
-  imports: [],
+  imports: [
+    VropacityWidgetComponent
+  ],
   templateUrl: './vr-view.component.html',
   styleUrl: './vr-view.component.scss'
 })
 export class VrViewComponent implements AfterViewInit {
   renderPipeline:VrRenderPipeline = new VrRenderPipeline();
   @ViewChild('vtkRenderWindowDiv') vtkDiv!:ElementRef;
-  constructor(private loaderService:ExamSeriesLoaderService,private viewUtilities:ViewUtilitiesService)
+  constructor(private loaderService:ExamSeriesLoaderService,private viewSynchronizer:ViewSynchronizerService)
   {
     this.loaderService.onSeriesVolumeLoaded().subscribe((volume)=>{
-      this.renderPipeline.vrMapper.setInputData(volume.image);
-      this.renderPipeline.colorTransferFunction.removeAllPoints();
-      this.renderPipeline.colorTransferFunction.addRGBPoint(0,0,1,0);
-      this.renderPipeline.colorTransferFunction.addRGBPoint(5000,0,0,1);
-      this.renderPipeline.piecewiseFunction.removeAllPoints();
-      this.renderPipeline.piecewiseFunction.addPoint(0,0);
-      this.renderPipeline.piecewiseFunction.addPoint(2000,0.8);
-      this.renderPipeline.piecewiseFunction.addPoint(20000,1.0);
-      this.renderPipeline.actor.getProperty().setRGBTransferFunction(0,this.renderPipeline.colorTransferFunction);
-      this.renderPipeline.actor.getProperty().setScalarOpacity(0,this.renderPipeline.piecewiseFunction);
+      if (!this.loaderService.primaryVolume) {
+        throw new Error('loading error: primary volume missing.');
+      }
+      if (!this.loaderService.labelVolume) {
+        throw new Error('loading error: primary volume missing.');
+      }
 
-      this.renderPipeline.renderer?.resetCamera();
+
+      this.renderPipeline.initPipelineToCurrentVolumes(this.loaderService.primaryVolume.image,this.loaderService.labelVolume?.image);
+
+
+      let labelVolume = this.loaderService.labelVolume?.image;
+      if (!labelVolume) {
+        throw new Error('No Label Volume after load.');
+      }
+
+
+      this.renderPipeline.renderer.resetCamera();
       this.renderPipeline.renderWindow?.render();
 
-
+    });
+    this.viewSynchronizer.onUpdateLabelVolume().subscribe(()=> {
+      this.renderPipeline.renderWindow?.render();
     })
   }
 
 ngAfterViewInit()
 {
-  this.viewUtilities.initCommonVtkJSPipeline(this.renderPipeline, this.vtkDiv);
+  let interactor = vtkInteractorStyleTrackballCamera.newInstance();
+  this.renderPipeline.initCommonVtkJSPipeline(this.vtkDiv,interactor);
   try {
     if (!this.renderPipeline.renderer)
     {
@@ -61,7 +59,7 @@ ngAfterViewInit()
     {
       return;
     }
-    this.renderPipeline.renderer.addActor(this.renderPipeline.actor);
+    this.renderPipeline.renderer.addActor(this.renderPipeline.primaryVrActor);
 
   }
   catch (e) {

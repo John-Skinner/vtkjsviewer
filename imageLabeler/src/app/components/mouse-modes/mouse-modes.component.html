@@ -1,0 +1,17 @@
+<div id="mouseModesDiv">
+  <input type="radio" name="mouse-mode" id="panID" value="pan" (change)="setMouseModePan()"/>
+  <label for="panID">PAN</label>
+  <input type="radio" name="mouse-mode" id="zoomID" value="zoom" (change)="setMouseModeZoom()"/>
+  <label for="zoomID">ZOOM</label>
+  <input type="radio" name="mouse-mode" id="wlID" value="wl" (change)="setWL()" checked />
+  <label for="wlID"> WL</label>
+  <input type="radio" name="mouse-mode" id="pageID" value="page" (change)="setMouseModePage()"/>
+  <label for="pageID" >PAGE</label>
+  <input type="radio" name="mouse-mode" id="rcID" value="rc" (change)="setRC()" />
+  <label for="pageID" >RC</label>
+  <input type="radio" name="mouse-mode" id="drawID" value="draw" (change)="setDraw()" />
+  <label for="drawID" >DRAW</label>
+  <input type="radio" name="mouse-mode" id="eraseID" value="erase" (change)="setErase()" />
+  <label for="eraseID">ERASE</label>
+
+</div>

@@ -58,7 +58,6 @@ class ImageLoader {
         leSum += (b2*256+b1);
         this.pixels[i] = b2 * 256 + b1;
       }
-      this.pixels[this.dimensions[0]*this.dimensions[1]-1] = 4000;
       this.pixelsCoded = Buffer.from(this.pixels.buffer).toString('base64');
 
 
