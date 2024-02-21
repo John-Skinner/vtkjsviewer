@@ -1,4 +1,10 @@
+
+#VRVizID {
+  display:grid;
+  grid-template-columns: 1fr;
+  grid-template-rows:5fr 2fr
+}
 #vtkRenderWindowDiv {
-  width:200px;
-  height: 200px;
+  height: 300px;
+  background-color:black;
 }

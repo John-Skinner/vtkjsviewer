@@ -1,0 +1,20 @@
+#mouseModesDiv {
+  display:grid;
+  grid-template-columns:1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr;
+  grid-template-rows:5mm 5mm
+}
+input[type=radio] {
+  width:5mm;
+}
+#drawColorLabelID {
+  grid-row:2;
+  grid-column:6/8
+}
+#drawColorID {
+  grid-row:2;
+  grid-column:8;
+  width:8mm
+}
+label {
+  width:8mm
+}

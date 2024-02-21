@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Subject} from "rxjs";
-import {mat3} from 'gl-matrix'
 import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import {VolumeLoaderService} from "./volume-loader.service";
+import {ImageUtilities} from "../Utilities/ImageUtilities";
+import {SyntheticImageGenerator} from "./synthetic-image.generator";
+import {CameraSettings} from "../Utilities/CameraSettings";
+import {PixelStatistics} from "../Utilities/PixelStatistics";
+
 export interface ExamSeriesNode {
   name:string;
   parent?:string;
@@ -17,8 +21,7 @@ interface SeriesListAPI {
 }
 export interface VolumeInstance {
   image:vtkImageData,
-  direction:mat3,
-  position:number[]
+
 }
 export interface VolumeAPI {
   exam:string;
@@ -36,6 +39,10 @@ export class ExamSeriesLoaderService {
   examLoadedSubject = new Subject<void>();
   seriesLoadedSubject = new Subject<string>();
   seriesVolumeSubject = new Subject<VolumeInstance>();
+  labelVolume:VolumeInstance | null = null;
+  primaryVolume:VolumeInstance | null = null;
+  useSynthLoad = false;
+  primaryVolumeStats:PixelStatistics | null = null;
 
   onExamLoadedSubject() {
     return this.examLoadedSubject.asObservable();
@@ -93,13 +100,45 @@ export class ExamSeriesLoaderService {
     })
     this.seriesLoadedSubject.next(exam);
   }
+  fillLabelVolumeFromPrimaryVolume() {
+    if (this.primaryVolume) {
+      if (this.primaryVolume.image) {
+        this.labelVolume = {
+          image:ImageUtilities.createInt16ImageFromImage(this.primaryVolume.image)
+        };
+        SyntheticImageGenerator.applyConstant(this.labelVolume.image,0)
+      }
+    }
+
+  }
   public async getSeriesVolumeSummary(exam:string, series:string) {
     let volumeResponse = await fetch('/images/e'+ exam + '/s' + series);
     let volume = await volumeResponse.json() as VolumeAPI;
     try {
-      let resultVolume = await this.volumeLoader.aLoad(volume);
 
-      this.seriesVolumeSubject.next(resultVolume);
+
+      if (this.useSynthLoad) {
+        let checkerVolume = vtkImageData.newInstance();
+        SyntheticImageGenerator.createCheckerBoard(checkerVolume,[64,64,32],8,[0,1000]);
+        this.primaryVolume = {
+          image: checkerVolume
+        };
+        let ijk2lps=checkerVolume.getIndexToWorld();
+        CameraSettings.printMat4(ijk2lps,'checker volume');
+        console.log(`origin:${checkerVolume.getOrigin()}`);
+        console.log(`dimension:${checkerVolume.getDimensions()}`);
+        console.log(`spacing:${checkerVolume.getSpacing()}`);
+
+      }
+      else {
+        this.primaryVolume = await this.volumeLoader.aLoad(volume);
+      }
+      this.primaryVolumeStats = new PixelStatistics(this.primaryVolume.image);
+      this.primaryVolumeStats.computeStats();
+
+      this.fillLabelVolumeFromPrimaryVolume();
+
+      this.seriesVolumeSubject.next(this.primaryVolume);
     }
     catch (e) {
       console.log(`pixel load error:${e}`);

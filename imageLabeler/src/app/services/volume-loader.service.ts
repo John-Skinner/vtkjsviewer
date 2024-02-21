@@ -100,7 +100,6 @@ export class VolumeLoaderService {
 
   static base64ToShortArray(base64:string) {
      let binaryString = atob(base64);
-     console.log(`encoded length:${base64.length} binary string length:${binaryString.length}` );
     let bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
@@ -108,7 +107,6 @@ export class VolumeLoaderService {
     var shorts = new Int16Array(bytes.buffer);
     let imageSize = shorts.length;
     let lastPixel = shorts[imageSize-1]
-    console.log(`copied image length:${imageSize} last pixel:${lastPixel}`);
     return shorts;
   }
   aLoad(volume:VolumeAPI) {
@@ -157,14 +155,13 @@ export class VolumeLoaderService {
     let ijkToLPS=image.getIndexToWorld();
     VolumeLoaderService.printMat4(ijkToLPS,'image ijk2lps');
     let volumeInstance:VolumeInstance = {
-      image:image,
-      direction:vtkDirection,
-      position:vtkOrigin
+      image:image
     }
     return volumeInstance;
 
     // origin and direction will be captured by actor.
   }
+
   loadNextSlice(res:(res:VolumeInstance)=>void,rej:(rej:string)=>void)
   {
 
@@ -183,7 +180,6 @@ export class VolumeLoaderService {
             let volumeSlice = jsonParsed as VolumeSlice;
             let shorts = VolumeLoaderService.base64ToShortArray(volumeSlice.pixels);
             let sliceSize  = this.volume.ijkDimension[0]*this.volume.ijkDimension[1];
-            console.log(`adding slice:${this.pendingSlice} array size:${shorts.length}`);
             let base = sliceSize*this.pendingSlice;
             for(let i = 0;i < sliceSize;i++) {
               this.pixels[base+i] = shorts[i];
@@ -191,7 +187,6 @@ export class VolumeLoaderService {
             if (this.pendingSlice < this.volume.ijkDimension[2]-1) {
               this.pendingSlice++;
               let percentDone = 100.0*this.pendingSlice/(this.volume.ijkDimension[2]-1);
-              console.log(`% done:${percentDone}`);
               this.loadProgressSubject.next(percentDone);
               setTimeout(()=>
               {
@@ -203,7 +198,6 @@ export class VolumeLoaderService {
               this.loadProgressSubject.next(100);
               this.volumeInstance = this.createVtkImageDataInstance(this.pixels);
               if (this.volumeInstance) {
-
                 console.log(`volume resolves to:${this.volumeInstance.image.getDimensions()}`);
                 res(this.volumeInstance);
               }

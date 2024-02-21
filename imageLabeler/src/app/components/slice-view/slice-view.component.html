@@ -1,4 +1,9 @@
-<h2> Labeler Slice Visualization</h2>
-<div #vtkRenderWindowDivI id="vtkRenderWindowDiv">
-
+<div>
+  <h2> Labeler Slice Visualization</h2>
+  <div id="sliceViewID" >
+    <div #vtkRenderWindowDivI id="vtkRenderWindowDiv" >
+    </div>
+    <app-mouse-modes (mouseModeEvent)="updateMouseMode($event)"
+                     (drawColorEvent)="updateDrawColor($event)"></app-mouse-modes>
+  </div>
 </div>
