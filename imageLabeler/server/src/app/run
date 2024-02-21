@@ -1,4 +1,3 @@
 #!/bin/bash
 export PATH=/serverRoot/node-v20/bin:${PATH}
-export IMAGESDIR="/serverRoot/vtkjsLabeler/DICOMImages"
 nohup sudo ./rs >& stats.txt
