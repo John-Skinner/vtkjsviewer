@@ -1,12 +1,9 @@
 <div id="examListID">
-  <p id = 'instructionsID'>
-    Select an exam to open series of the exam.
-    Select series item to load.
-  </p>
+<h2> Dataset Selector</h2>
 <mat-tree [dataSource]="examsSource" [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node" class="es-tree-node">
     <button mat-icon-button disabled></button>
-    <button (click)="expand(node)">
+    <button (click)=" expand(node)">
     {{node.name}}
     </button>
   </mat-tree-node>

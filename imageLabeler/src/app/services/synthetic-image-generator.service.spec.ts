@@ -1,18 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing'
 
-import { SyntheticImageGenerator } from './synthetic-image.generator';
-import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
+import { SyntheticImageGenerator } from './synthetic-image.generator'
 
 describe('SyntheticImageGeneratorService', () => {
-  let service: SyntheticImageGenerator;
+  let service: SyntheticImageGenerator
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service =  new SyntheticImageGenerator();
-  });
+    TestBed.configureTestingModule({})
+    service = new SyntheticImageGenerator()
+  })
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
-});
+    expect(service).toBeTruthy()
+  })
+})

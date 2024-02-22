@@ -58,6 +58,10 @@ export class VrRenderPipeline extends BasePipeline {
     this.labelPiecewiseFunction.addPoint(30000,1);
     this.labelVrActor.getProperty().setRGBTransferFunction(0,this.labelColorTransferFunction);
     this.labelVrActor.getProperty().setScalarOpacity(0,this.labelPiecewiseFunction);
+    this.labelVrActor.getProperty().setUseGradientOpacity(0,true);
+    this.labelVrActor.getProperty().setShade(true);
+    this.labelVrActor.getProperty().setAmbient(0.3);
+    this.labelVrActor.getProperty().setDiffuse(0.9);
 
 
     this.renderer.resetCamera();

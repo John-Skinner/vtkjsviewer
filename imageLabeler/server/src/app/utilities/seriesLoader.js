@@ -1,11 +1,11 @@
-const fs=require('fs');
-const {promisify}=require('util');
-const ImageLoader=require('./imageLoader');
+const fs = require('fs');
+const {promisify} = require('util');
+const ImageLoader = require('./imageLoader');
 const VolumeGroup = require("./volumeGroup");
 const Mat4 = require('gl-matrix/cjs/mat4')
 
 
-const areaddir=promisify(require('fs').readdir);
+const areaddir = promisify(require('fs').readdir);
 
 /**
  * SeriesLoader examines all the DICOM part 10 files within a directory
@@ -15,22 +15,28 @@ const areaddir=promisify(require('fs').readdir);
  * directories that contain multiple volumes.  The VolumeGroup will play
  * a role in that extension.
  */
-class SeriesLoader {
+class SeriesLoader
+{
   constructor()
   {
     /**
+     * List of ImageLoader objects of the series.
      * @type {ImageLoader[]}
      */
-    this.dicomFiles=[];
+    this.dicomFiles = [];
     this.dicomGroups = []
     this.loadErrorOccured = false;
     this.IJKToLPS = Mat4.create();
   }
+
+  /**
+   * asynchronously load a directory of image files.
+   * @param directory
+   * @returns {Promise<void>}
+   */
   async loadDirectory(directory)
   {
-
-
-    let dirents = await areaddir(directory,{withFileTypes:true});
+    let dirents = await areaddir(directory, {withFileTypes: true});
     console.log(`Processing ${dirents.length} files`);
     try
     {
@@ -46,60 +52,73 @@ class SeriesLoader {
         {
           console.log(`isDirectory(${dirent.name()})`)
         }
-      },this)
-    }
-    catch(err) {
+      }, this)
+    } catch (err)
+    {
       console.error(`Error in reading series:${err}`);
     }
 
   }
 
   /**
-   *
-   * @param {ImageLoader} image1
-   * @param {ImageLoader} image2
+   * This is the ordering function for the geometric sort if the ImageLoader objects.
+   * @param {ImageLoader} image1 first item of comparison.
+   * @param {ImageLoader} image2 second item of comparison.
    */
-  ordering(image1,image2) {
-    let found2IsGreater = image1.geoSortKeys.some((image1key,i)=>{
+  ordering(image1, image2)
+  {
+    let found2IsGreater = image1.geoSortKeys.some((image1key, i) =>
+    {
       return image1key < image2.geoSortKeys[i];
     });
-    if (!found2IsGreater) {
+    if (!found2IsGreater)
+    {
       return -1;
     }
     return 1;
   }
 
-  presortImages() {
+  /**
+   * order the ImageLoader objects by geometric order.
+   */
+  presortImages()
+  {
     let initialRefImage = this.dicomFiles[0];
     let currentVolumeGroup = new VolumeGroup();
     currentVolumeGroup.initializeWithImage(initialRefImage);
     this.dicomGroups.push(currentVolumeGroup);
-    this.dicomFiles.forEach((image)=>{
+    this.dicomFiles.forEach((image) =>
+    {
       image.calcGeoSortKeys(initialRefImage.ulhc);
     })
 
     this.dicomFiles.sort(this.ordering);
-    this.dicomFiles.forEach((image)=>{
+    this.dicomFiles.forEach((image) =>
+    {
       console.log(`keys:${image.geoSortKeys} ulhc:${image.ulhc}`);
-      if (currentVolumeGroup.isCompatible(image)) {
+      if (currentVolumeGroup.isCompatible(image))
+      {
         currentVolumeGroup.images.push(image);
-      }
-      else {
+      } else
+      {
         console.error(`Error, only one volume group supported at this time`);
         this.loadErrorOccured = true;
 
       }
 
     });
-    if (!this.loadErrorOccured) {
+    if (!this.loadErrorOccured)
+    {
       this.dicomGroups[0].prep3dParameters();
-  }
+    }
     let vg = this.dicomGroups[0];
-    if (vg.loadStatus  !== vg.loadSuccess) {
+    if (vg.loadStatus !== vg.loadSuccess)
+    {
       return;
     }
     this.IJKToLPS = vg.IJKToLPS;
-}
+  }
 
 }
+
 module.exports = SeriesLoader;

@@ -1,0 +1,100 @@
+<div id="aboutID">
+  <h2> Purpose</h2>
+  This visualization app showcases my personal career interests and skills.
+  I was working for a medical company that focused on fMRI post-processing that was moving from desktop to web-based
+  visualization.  We were very pleasantly surprised by the speed at which we could build our web application with vtk.js as well
+  as the rendering speeds it offers.
+  This prototype is a reflection of about 3 weeks of work.
+  <p>
+  This visualization app is a prototype for labelling regions of a MRI scan.
+  It is a work-in-progress looking at optimizing the interactive interfaces for
+  marking regions of a 3D volume.
+    <p>
+  A more mature desktop application of the same nature  is the <a href="https://www.slicer.org/">VTK Slicer</a> desktop application.
+  I am pursuing looking more deeply at the human interface options for manual or semi-automatic segmentation.
+  </p>
+  <h2> Technologies </h2>
+  This visualization app leans heavily on
+  <a href="https://kitware.github.io/vtk-js/docs/index.html">vtk.js</a> which provides the volume rendering
+  and 3D reslicing visualizations.
+  <p>
+  The UI uses <a href="https://angular.io">Angular</a> for the overall user interface along with
+    <a href="https://material.angular.io/"> Angular Materials </a> as well as
+    <a href="https://rxjs.dev/">RxJS</a> for the overall integration of the User Interface.
+    <p>
+  The server is NodeJS using the DICOM parser npm package <code>dicom-parser</code>.
+  The server uses <code>Koa</code> and it's router, body-parser, and static add-ons.
+  </p>
+  <h2>
+    How to Use
+  </h2>
+  <ol>
+    <li>Select an exam (either Exam 008 or Exam 25. by clicking on the "Exam" text.</li>
+    <li>Select a series under the exam  just selected by clicking on the numerical items.</li>
+    <li> The series will take a while to load.  I am using a budget server, and the data is about 0.0 Gigs for
+    a typical dataset.  Once loaded, the 2 viewports appear with images.</li>
+    <li> Adjust the view around some area of interest to trace in the left viewport.
+      Initially the mouse mode will be set to "WL" where you can adjust the brightness and contrast.
+    Mouse drag left/right adjusts contrast.
+    Mouse drag top/bottom adjusts brightness with mouse-down increasing brightness.
+    Change mouse modes to either of <code>PAN</code> for moving the image, <code> ZOOM</code> for adjusting magnification.
+    To increase magnification, mouse down below the center of the image and drag down.  Similarly, drag up for reducing
+    magnification. <code>PAGE</code> is to scroll through the stack of images of the volume.
+    </li>
+    <li>
+      Start drawing by selecting <code>DRAW</code> and drag the mouse around the region of interest, filling in the
+      region.  Then move to the next slice by using the scroll wheel.
+      Continue through the stack of slices.
+      You can switch to the <code>ERASE</code> mode to erase some unwanted drawn region.
+    </li>
+    <li>Adjust the global reference volume rendering to gain a feel for the relative region from a more 3D perspective.
+    In the global region, mouse drag will rotate the view.  The scroll wheel will perform the zoom adjustment.
+    The pan requires holding the shift key while dragging the mouse.</li>
+    <h2>Contact</h2>
+    <code>admin&commat;webviz.xyz</code>
+  </ol>
+  <h2>Plans</h2>
+<ul>
+  <li> Offer brush different brush sizes</li>
+  <li> Have brush shape conform to image gradient.</li>
+  <li> Offer Sagittal and Coronal views</li>
+</ul>
+  <h2> Source of DICOM Data
+  </h2>
+  <ol>
+    <li>Go to <a href="https://central.xnat.org/">central.xnat.org</a></li>
+    <li>Pick [MR] tab</li>
+    <li>Under 'Project:' field, click the field and a list of projects is presented.</li>
+    <li>Select IGT_FMRI_NEURO</li>
+    <li>Click the [Submit] button.</li>
+    <li>Pick a session such as label [025 IGT_FMRI_NEURO) for 025</li>
+    <li>Select all the series You will get the series as a zop file that contains DICOM part 10 files.
+      Unpack the files and put them into a directory structure</li>
+    <pre>
+<code>
+  exam
+    series
+      images
+</code>
+    </pre>
+    For example:
+    <pre>
+    <code>
+      25
+      11-SPGR
+      000001.IMA
+      000002.IMA
+      ...
+      12-DTI
+      000001.IMA
+      000002.IMA
+      ...
+      12-T2
+      000001.IMA
+      000002.IMA
+      ...
+    </code>
+    </pre>
+  </ol>
+
+</div>

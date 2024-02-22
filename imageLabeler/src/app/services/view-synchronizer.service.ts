@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import {Subject} from "rxjs";
+import { Injectable } from '@angular/core'
+import { Observable, Subject } from 'rxjs'
 @Injectable({
   providedIn: 'root'
 })
 export class ViewSynchronizerService {
-  labelUpdatedSubject:Subject<void> = new Subject();
+  labelUpdatedSubject = new Subject<void>()
 
-  constructor() { }
-  updateLabelVolume() {
-    this.labelUpdatedSubject.next();
+  updateLabelVolume (): void {
+    this.labelUpdatedSubject.next()
   }
-  onUpdateLabelVolume() {
-    return this.labelUpdatedSubject.asObservable();
+
+  onUpdateLabelVolume (): Observable<void> {
+    return this.labelUpdatedSubject.asObservable()
   }
 }

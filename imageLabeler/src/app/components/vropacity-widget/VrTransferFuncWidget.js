@@ -1,13 +1,9 @@
-import vtkPiecewiseGaussianWidget from '@kitware/vtk.js/Interaction/Widgets/PiecewiseGaussianWidget';
-import vtkPiecewiseFunction from "@kitware/vtk.js/Common/DataModel/PiecewiseFunction";
-import vtkColorTransferFunction from "@kitware/vtk.js/Rendering/Core/ColorTransferFunction";
-export class VrTransferFuncWidget
-{
-  constructor()
-  {
-    this.widget = vtkPiecewiseGaussianWidget.newInstance();
-    this.opacityTransfer = null;
-    this.renderWindow = null;
+import vtkPiecewiseGaussianWidget from '@kitware/vtk.js/Interaction/Widgets/PiecewiseGaussianWidget'
+export class VrTransferFuncWidget {
+  constructor () {
+    this.widget = vtkPiecewiseGaussianWidget.newInstance()
+    this.opacityTransfer = null
+    this.renderWindow = null
     this.widget.updateStyle({
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
       histogramColor: 'rgba(100, 100, 100, 0.5)',
@@ -23,7 +19,7 @@ export class VrTransferFuncWidget
       buttonStrokeWidth: 1.5,
       handleWidth: 3,
       iconSize: 20, // Can be 0 if you want to remove buttons (dblClick for (+) / rightClick for (-))
-      padding: 10,
+      padding: 10
     })
   }
 
@@ -35,40 +31,40 @@ export class VrTransferFuncWidget
    * @param {vtkImageData} image
    * @param {vtkRenderWindow} renderWindow
    */
-  configure(container,colorTransferFunc,
-            opacityFunc,image,
-            renderWindow) {
-    let data = image.getPointData().getScalars();
-    let windowWidth = container.clientWidth;
-    let windowHeight = container.clientHeight;
-    this.widget.setContainer(container);
-    this.widget.setSize(windowWidth,windowHeight);
-    this.widget.setDataArray(data.getData());
-    this.widget.setColorTransferFunction(colorTransferFunc);
-    this.opacityTransfer = opacityFunc;
-    this.widget.applyOpacity(this.opacityTransfer);
-    this.widget.bindMouseListeners();
-    this.widget.onAnimation((start)=>{
+  configure (container, colorTransferFunc,
+    opacityFunc, image,
+    renderWindow) {
+    const data = image.getPointData().getScalars()
+    const windowWidth = container.clientWidth
+    const windowHeight = container.clientHeight
+    this.widget.setContainer(container)
+    this.widget.setSize(windowWidth, windowHeight)
+    this.widget.setDataArray(data.getData())
+    this.widget.setColorTransferFunction(colorTransferFunc)
+    this.opacityTransfer = opacityFunc
+    this.widget.applyOpacity(this.opacityTransfer)
+    this.widget.bindMouseListeners()
+    this.widget.onAnimation((start) => {
       if (start) {
-        this.renderWindow.getInteractor().requestAnimation(this.widget);
+        this.renderWindow.getInteractor().requestAnimation(this.widget)
+      } else {
+        this.renderWindow.getInteractor().cancelAnimation(this.widget)
       }
-      else {
-        this.renderWindow.getInteractor().cancelAnimation(this.widget);
-      }
-
     })
-    this.widget.onOpacityChange(()=> {
-      this.widget.applyOpacity(this.opacityTransfer);
+    this.widget.onOpacityChange(() => {
+      this.widget.applyOpacity(this.opacityTransfer)
       if (!this.renderWindow.getInteractor().isAnimating()) {
-        this.renderWindow.render();
+        this.renderWindow.render()
       }
     })
-    this.renderWindow = renderWindow;
+    this.renderWindow = renderWindow
   }
-  addGaussian(position, height, width, xBias,yBias) {
-    this.widget.addGaussian(position,height,width, xBias,yBias);
+
+  addGaussian (position, height, width, xBias, yBias) {
+    this.widget.addGaussian(position, height, width, xBias, yBias)
   }
-  render() {
-    this.renderWindow.render();
+
+  render () {
+    this.renderWindow.render()
   }
 }

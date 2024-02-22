@@ -1,17 +1,21 @@
 :host {
   display:grid;
   grid-template-columns: 20% 80%;
-  grid-template-rows: 50% 50%;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
 }
 #renderPanel {
   display:grid;
   grid-template-columns: 300px 300px;
-  grid-template-rows:300px 300px;
+  grid-template-rows:300px 150px;
 }
 #controlPanelID {
   display:flex;
   flex-direction: column;
 
+}
+#aboutID {
+  grid-row:2/4;
+  grid-column:1/3;
 }
 
 

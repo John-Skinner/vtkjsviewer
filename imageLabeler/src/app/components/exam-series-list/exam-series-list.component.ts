@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {NestedTreeControl} from '@angular/cdk/tree';
+import { Component, type OnInit } from '@angular/core'
+import { NestedTreeControl } from '@angular/cdk/tree'
 import {
   MatNestedTreeNode,
   MatTree,
@@ -7,10 +7,15 @@ import {
   MatTreeNode, MatTreeNodeDef,
   MatTreeNodeOutlet,
   MatTreeNodeToggle
-} from "@angular/material/tree";
-import {MatIcon} from "@angular/material/icon";
-import {ExamSeriesLoaderService, ExamSeriesNode} from "../../services/exam-series-loader.service";
-import {MatIconButton} from "@angular/material/button";
+} from '@angular/material/tree'
+import { MatIcon } from '@angular/material/icon'
+import { ExamSeriesLoaderService, ExamSeriesNode } from '../../services/exam-series-loader.service'
+import { MatIconButton } from '@angular/material/button'
+
+/**
+ * ExamSeriesListComponent serves as the view into the 'database' of images, as well as the
+ * control for loading datasets.
+ */
 
 @Component({
   selector: 'app-exam-series-list',
@@ -30,50 +35,61 @@ import {MatIconButton} from "@angular/material/button";
 })
 export class ExamSeriesListComponent implements OnInit {
   treeControl =
-    new NestedTreeControl<ExamSeriesNode>(node=>node.children);
-  examsSource=new MatTreeNestedDataSource<ExamSeriesNode>()
-  constructor(private examSeriesService:ExamSeriesLoaderService)
-  {
-    this.examSeriesService.onExamLoadedSubject().subscribe(()=>
-    {
-      console.log('update the exam level');
-      this.examsSource.data = this.examSeriesService.getExams();
-      this.examsSource.data.forEach((entry)=> {
-        console.log(`entry for ui:${entry}`);
-      })
-    })
+    new NestedTreeControl<ExamSeriesNode>(node => node.children)
 
+  examsSource = new MatTreeNestedDataSource<ExamSeriesNode>()
+  constructor (private examSeriesService: ExamSeriesLoaderService) {
+    this.examSeriesService.onExamLoadedSubject().subscribe(() => {
+      console.log('update the exam level')
+      this.examsSource.data = this.examSeriesService.getExams()
+    })
   }
-  async expand(node: ExamSeriesNode)
-  {
-    if (node.children)
-    {
-      console.log(`parent(${node.name})`);
-    } else
-    {
-      if (!node.parent)
-      {
-        return;
+
+  expand (node: ExamSeriesNode): void {
+    let hasChildren = node !== null
+    if (hasChildren) {
+      hasChildren = node.children !== undefined
+      if (hasChildren) {
+        console.log(`number of children:${node.children?.length}`)
       }
-      console.log(` getSeriesVolumeSummary(${node.parent},${node.name})`);
-      await this.examSeriesService.getSeriesVolumeSummary(node.parent, node.name)
+    }
+    if (hasChildren) {
+      console.log(`parent(${node.name})`)
+    } else {
+      console.log(` getSeriesVolumeSummary(${node.parent},${node.name})`)
+      this.examSeriesService.getSeriesVolumeSummary(node.parent, node.name)
+        .then(() => { console.log('series summary returned') })
+        .catch((reason) => {
+          throw new Error(`Error, fetching series reason:${reason}`)
+        })
     }
   }
-  leaf() {
-    console.log(`leaf`);
+
+  hasChild = (_: number, node: ExamSeriesNode): boolean => {
+    if (node === undefined) {
+      return false
+    }
+    if (node.children === undefined) {
+      return false
+    }
+    if (node.children.length === 0) {
+      return false
+    }
+    return true
   }
-  hasChild = (_: number, node: ExamSeriesNode) => !!node.children && node.children.length > 0;
 
-  ngOnInit(): void {
-    this.loadExamSeries().then(()=>{
-      console.log(`initial load started`);
-    })
+  ngOnInit (): void {
+    this.loadExamSeries()
+      .then(() => {
+        console.log('initial load started')
+      })
+      .catch((reason) => {
+        throw new Error(`Error on loading exams reason:${reason}`)
+      })
+  }
 
-
-    }
-    async loadExamSeries()
-    {
-      await this.examSeriesService.LoadExamsList();
-      console.log('response returned');
-    }
+  async loadExamSeries (): Promise<void> {
+    await this.examSeriesService.LoadExamsList()
+    console.log('response returned')
+  }
 }

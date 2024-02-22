@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing'
 
-import { VolumeLoaderService } from './volume-loader.service';
+import { VolumeLoaderService } from './volume-loader.service'
 
 describe('VolumeLoaderService', () => {
-  let service: VolumeLoaderService;
+  let service: VolumeLoaderService
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(VolumeLoaderService);
-  });
+    TestBed.configureTestingModule({})
+    service = TestBed.inject(VolumeLoaderService)
+  })
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+    expect(service).toBeTruthy()
+  })
+})
