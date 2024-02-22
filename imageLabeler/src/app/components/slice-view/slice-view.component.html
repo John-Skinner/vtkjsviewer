@@ -3,6 +3,7 @@
   <div id="sliceViewID" >
     <div #vtkRenderWindowDivI id="vtkRenderWindowDiv" >
     </div>
+    <span>Cursor:{{CursorCoord}}</span>
     <app-mouse-modes (mouseModeEvent)="updateMouseMode($event)"
                      (drawColorEvent)="updateDrawColor($event)"></app-mouse-modes>
   </div>

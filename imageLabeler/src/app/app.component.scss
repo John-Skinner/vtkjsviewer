@@ -1,7 +1,11 @@
 :host {
+display:flex;
+  flex-direction: column;
+}
+#topAssemblyID {
   display:grid;
   grid-template-columns: 20% 80%;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
 }
 #renderPanel {
   display:grid;
@@ -13,9 +17,6 @@
   flex-direction: column;
 
 }
-#aboutID {
-  grid-row:2/4;
-  grid-column:1/3;
-}
+
 
 

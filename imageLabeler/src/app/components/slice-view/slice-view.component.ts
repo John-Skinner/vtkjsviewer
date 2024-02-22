@@ -32,6 +32,7 @@ export class SliceViewComponent implements AfterViewInit, View {
   viewDirectionIJKAxisNumber = 2
   painter: SegmentPainter = new SegmentPainter()
   paintRadius = 0
+  CursorCoord='';
 
   constructor (private loaderService: ExamSeriesLoaderService, private viewSynchronizer: ViewSynchronizerService) {
     this.loaderService.onSeriesVolumeLoaded().subscribe((volume) => {
@@ -80,6 +81,9 @@ export class SliceViewComponent implements AfterViewInit, View {
 
       this.painter.configure(labelVolume)
       this.renderPipeline.renderWindow.render()
+    })
+    this.viewSynchronizer.onCursorUpdate().subscribe((coord)=>{
+      this.CursorCoord = this.viewSynchronizer.formattedCursorCoord();
     })
   }
 
@@ -278,7 +282,6 @@ export class SliceViewComponent implements AfterViewInit, View {
     viewCoord2[2] = focalViewCoord[2]
     const worldCoord = this.renderPipeline.renderer.viewToWorld(viewCoord2[0], viewCoord2[1], viewCoord2[2])
     vec3.set(lpsCoord, worldCoord[0], worldCoord[1], worldCoord[2])
-    console.log(`world coord:${worldCoord}`)
   }
 
   rc (displayCoord: vec3): void {
@@ -288,7 +291,7 @@ export class SliceViewComponent implements AfterViewInit, View {
     }
     const lpsCoord = vec3.create()
     this.displayCamFocusToLPS(displayCoord, lpsCoord)
-    console.log(`world coord:${lpsCoord}`)
+    this.viewSynchronizer.updateCursor([lpsCoord[0],lpsCoord[1],lpsCoord[2]]);
   }
 
   draw (dcP1: vec3, dcP2: vec3, intensity: number) {

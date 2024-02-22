@@ -18,7 +18,7 @@ describe('CameraSettings', () => {
     let camera = vtkCamera.newInstance();
     let cs = new CameraSettings();
     cs.calcImageDominantDirections();
-    cs.axialView(null);
+    cs.axialView([],null);
     let center = camera.getFocalPoint();
     let pos = camera.getPosition();
     let clipRange = camera.getClippingRange();

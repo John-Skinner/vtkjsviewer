@@ -1,16 +1,14 @@
 <div id="aboutID">
   <h2> Purpose</h2>
-  This visualization app showcases my personal career interests and skills.
-  I was working for a medical company that focused on fMRI post-processing that was moving from desktop to web-based
-  visualization.  We were very pleasantly surprised by the speed at which we could build our web application with vtk.js as well
-  as the rendering speeds it offers.
-  This prototype is a reflection of about 3 weeks of work.
+  This web application showcases my interests in visualization using vtk.js.
+  In my previous role as a software developer, I used vtk.js to develop web-based applications for
+  displaying fMRI imaging data.
+  I was pleasantly surprised by the speed at which we could build our web application with vtk.js.
   <p>
-  This visualization app is a prototype for labelling regions of a MRI scan.
-  It is a work-in-progress looking at optimizing the interactive interfaces for
-  marking regions of a 3D volume.
+  This visualization app is a prototype for labeling regions of a MRI scan that I began on Feb. 3, 2024.
+  It is a work-in-progress looking at time-efficient ways to label 3D volumes of imaging data.
     <p>
-  A more mature desktop application of the same nature  is the <a href="https://www.slicer.org/">VTK Slicer</a> desktop application.
+  A more mature desktop application of the same nature is the <a href="https://www.slicer.org/">VTK Slicer</a> desktop application.
   I am pursuing looking more deeply at the human interface options for manual or semi-automatic segmentation.
   </p>
   <h2> Technologies </h2>
@@ -23,23 +21,55 @@
     <a href="https://rxjs.dev/">RxJS</a> for the overall integration of the User Interface.
     <p>
   The server is NodeJS using the DICOM parser npm package <code>dicom-parser</code>.
-  The server uses <code>Koa</code> and it's router, body-parser, and static add-ons.
+  The server uses  <a href="https://koajs.com/">Koa</a> and it's router, body-parser, and static add-ons.
   </p>
   <h2>
     How to Use
   </h2>
+  <table>
+    <thead>
+    <td>Mouse Mode</td>
+    <td>Description</td>
+    </thead>
+    <tr>
+      <td>
+        PAN
+      </td>
+      <td>Drag mouse over image to move the image.</td>
+    </tr>
+    <tr>
+      <td>ZOOM</td>
+      <td>Click and drag the mouse from 3/4 down the image up: to zoom out, down: to zoom in</td>
+    </tr>
+    <tr>
+      <td>WL</td>
+      <td>Drag left: reduce contrast, right: increase contrast, up: reduce brightness, down:increase brightness</td>
+    </tr>
+    <tr>
+      <td>PAGE</td>
+      <td> Scroll wheel up to move to more superior slices, wheel down to more inferior slices.  Note that
+      paging with the scroll wheel is also available for PAN, WL, RC, DRAW, and ERASE. </td>
+    </tr>
+    <tr>
+      <td>RC</td>
+      <td> drag mouse about the image to see the coordinate.</td>
+    </tr>
+    <tr>
+      <td>DRAW</td>
+      <td>Drag the mouse over region to label about a small area; like a paint brush.</td>
+    </tr>
+    <tr>
+      <td>ERASE</td>
+      <td>Drag the mouse to erase areas much like drawing behaves.</td>
+    </tr>
+  </table>
   <ol>
     <li>Select an exam (either Exam 008 or Exam 25. by clicking on the "Exam" text.</li>
-    <li>Select a series under the exam  just selected by clicking on the numerical items.</li>
-    <li> The series will take a while to load.  I am using a budget server, and the data is about 0.0 Gigs for
+    <li>Select a series under the exam  just selected by clicking one of the numerical items.</li>
+    <li> The series will take a while to load.  I am using a budget server, and the data is about 0.9 Gigs for
     a typical dataset.  Once loaded, the 2 viewports appear with images.</li>
     <li> Adjust the view around some area of interest to trace in the left viewport.
-      Initially the mouse mode will be set to "WL" where you can adjust the brightness and contrast.
-    Mouse drag left/right adjusts contrast.
-    Mouse drag top/bottom adjusts brightness with mouse-down increasing brightness.
-    Change mouse modes to either of <code>PAN</code> for moving the image, <code> ZOOM</code> for adjusting magnification.
-    To increase magnification, mouse down below the center of the image and drag down.  Similarly, drag up for reducing
-    magnification. <code>PAGE</code> is to scroll through the stack of images of the volume.
+      After the mouse release, the drawn region appears in the volume rendering.
     </li>
     <li>
       Start drawing by selecting <code>DRAW</code> and drag the mouse around the region of interest, filling in the
@@ -54,8 +84,10 @@
     <code>admin&commat;webviz.xyz</code>
   </ol>
   <h2>Plans</h2>
+
 <ul>
-  <li> Offer brush different brush sizes</li>
+  <li> Methods to export the label masks.</li>
+  <li> Offer brush different brush sizes.</li>
   <li> Have brush shape conform to image gradient.</li>
   <li> Offer Sagittal and Coronal views</li>
 </ul>
