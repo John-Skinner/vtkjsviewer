@@ -9,6 +9,7 @@ import { PixelStatistics } from '../Utilities/PixelStatistics'
 
 export interface ExamSeriesNode {
   name: string
+  seriesDir:string
   parent: string
   children?: ExamSeriesNode[]
 }
@@ -65,12 +66,13 @@ export class ExamSeriesLoaderService {
     exams.exams.forEach((dir) => {
       const examEntry: ExamSeriesNode = {
         name: dir,
+        seriesDir:dir,
         parent: ''
       }
       this.examsList.push(examEntry)
     })
     for (const node of this.examsList) {
-      await this.LoadSeriesList(node.name)
+      await this.LoadSeriesList(node.seriesDir)
     }
     this.examLoadedSubject.next()
   }
@@ -90,7 +92,8 @@ export class ExamSeriesLoaderService {
     const series = await seriesResponse.json() as SeriesListAPI
     series.series.forEach((seriesEntry) => {
       const entry: ExamSeriesNode = {
-        name: seriesEntry,
+        name:  "Load " + seriesEntry, // make instructional string for display
+        seriesDir:seriesEntry,
         parent: exam
       }
       parent.children?.push(entry)

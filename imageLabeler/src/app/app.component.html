@@ -1,3 +1,50 @@
+<h2 id="overviewID"> 3D Volume Labeling Tool</h2>
+<h2> Purpose</h2>
+This web application showcases my interests in visualization using vtk.js.
+In my previous role as a software developer, I used vtk.js to develop web-based applications for
+displaying fMRI imaging data.
+I was pleasantly surprised by the speed at which we could build our web application with vtk.js.
+<p>
+  This visualization app is a prototype for labeling regions of a MRI scan that I built in about 3 weeks.
+<p>
+  A more mature desktop application of the same nature is the <a href="https://www.slicer.org/">VTK Slicer</a> desktop application.
+  I am looking at the human interface options for manual or semi-automatic segmentation.
+</p>
+<h2> Technologies </h2>
+This visualization app leans heavily on
+<a href="https://kitware.github.io/vtk-js/docs/index.html">vtk.js</a> which provides the volume rendering
+and 3D reslicing visualizations.
+<p>
+  The UI uses <a href="https://angular.io">Angular</a> for the overall user interface along with
+  <a href="https://material.angular.io/"> Angular Materials </a> as well as
+  <a href="https://rxjs.dev/">RxJS</a> for the overall integration of the User Interface.
+<p>
+  The server is NodeJS using the DICOM parser npm package <code>dicom-parser</code>.
+  The server uses  <a href="https://koajs.com/">Koa</a> and it's router, body-parser, and static add-ons.
+</p>
+<p> Follow the 'How to Use' steps below.</p>
+<h2>
+  How to Use
+</h2>
+
+<ol>
+  <li>Select an exam (either Exam 008 or Exam 25. by clicking on the "Exam" button.</li>
+  <li>Select a series under the exam  just selected by clicking one of the numerical items.</li>
+  <li> Wait for the 'Loading Status' progress to show all slices are loaded.  I am using a budget server, and the data is about 0.9 Gigs for
+    a typical dataset.  Once loaded, the 2 viewports appear with images.</li>
+  <li> Adjust the view around some area of interest to trace in the left viewport.
+    After the mouse release, the drawn region appears in the volume rendering.
+  </li>
+  <li>
+    Start drawing by selecting <code>DRAW</code> and drag the mouse around the region of interest, filling in the
+    region.  Then move to the next slice by using the scroll wheel.
+    Continue through the stack of slices.
+    You can switch to the <code>ERASE</code> mode to erase some unwanted drawn region.
+  </li>
+  <li>Adjust the global reference volume rendering to gain a feel for the relative region from a more 3D perspective.
+    In the global region, mouse drag will rotate the view.  The scroll wheel will perform the zoom adjustment.
+    The pan requires holding the shift key while dragging the mouse.</li>
+
 <div id="topAssemblyID">
   <div id="controlPanelID">
     <app-exam-series-list>

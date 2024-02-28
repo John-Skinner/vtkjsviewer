@@ -57,7 +57,7 @@ export class ExamSeriesListComponent implements OnInit {
       console.log(`parent(${node.name})`)
     } else {
       console.log(` getSeriesVolumeSummary(${node.parent},${node.name})`)
-      this.examSeriesService.getSeriesVolumeSummary(node.parent, node.name)
+      this.examSeriesService.getSeriesVolumeSummary(node.parent, node.seriesDir)
         .then(() => { console.log('series summary returned') })
         .catch((reason) => {
           throw new Error(`Error, fetching series reason:${reason}`)

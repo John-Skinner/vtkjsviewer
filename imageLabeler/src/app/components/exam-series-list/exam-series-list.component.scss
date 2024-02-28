@@ -21,3 +21,14 @@
 #instructionsID {
   font-size: large;
 }
+button {
+  border-radius: 4px;
+  margin:2px;
+}
+button:active {
+  transform:translateY(4px);
+}
+button:hover {
+  color:orange;
+  background-color: blue;
+}
